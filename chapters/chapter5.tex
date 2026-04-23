@@ -4,63 +4,81 @@
 \chapter{Challenges in Blockchain and the Blockchain Trilemma}
 \label{ch:challenges}
 
-\noindent\textbf{Declaration of Contributions:} This chapter was primarily authored by \textbf{Madhav Deorah}, who researched and wrote the sections on scalability issues, energy consumption, latency, transaction fees, and the Blockchain Trilemma. \textbf{Anmol Goklani} contributed to the formalisation of the trilemma trade-off. All team members reviewed the chapter.
+\noindent\textbf{Declaration of Contributions:} This chapter was primarily authored by \textbf{Madhav Deorah}, who researched and wrote the sections on scalability issues, energy consumption, latency, transaction fees, storage bloat, and the Blockchain Trilemma. \textbf{Anmol Goklani} contributed to the explanation of the trilemma trade-off. All team members reviewed the chapter.
 
 \bigskip
 
-Despite its transformative potential, blockchain technology faces several fundamental challenges that must be addressed before it can achieve mainstream adoption. This chapter examines these challenges and formalises the central trade-off that underlies many of them: the Blockchain Trilemma.
+Blockchain technology has many useful features, but it also has some serious problems that must be solved before it can be used on a very large scale. This chapter explains these problems and then discusses the main trade-off behind many of them, known as the Blockchain Trilemma.
 
 \section{Scalability Issues}
 \label{sec:scalability-challenge}
 
-As discussed in \Cref{sec:scalability}, blockchain networks process far fewer transactions per second than traditional systems. Bitcoin handles approximately 7 \gls{tps}, Ethereum approximately 15--30 \gls{tps}, while Visa processes around 50{,}000 \gls{tps}~\cite{kohad2020scalability}.
+As discussed in \Cref{sec:scalability}, blockchain networks process far fewer transactions per second than traditional payment systems. Bitcoin handles about 7 \gls{tps}, Ethereum handles about 15--30 \gls{tps}, while Visa can process around 50{,}000 \gls{tps}~\cite{kohad2020scalability}.
 
-This limitation becomes increasingly problematic as blockchain usage grows. During periods of high demand, networks become congested, transaction confirmation times increase, and fees rise sharply. For example, during the 2017 and 2021 cryptocurrency booms, Ethereum transaction fees sometimes exceeded \$50--\$100 per transaction.
+This becomes a bigger problem when more people use the network. During periods of high demand, the network can become crowded, transactions take longer to confirm, and fees increase. For example, during the 2017 and 2021 cryptocurrency booms, Ethereum transaction fees sometimes went above \$50--\$100 per transaction.
 
-The root cause is architectural: in most blockchain designs, \emph{every node processes every transaction}. This provides maximum security and decentralisation but creates an inherent throughput ceiling.
+The main reason is the basic design of many blockchains. In most systems, \emph{every node processes every transaction}. This helps security and decentralisation, but it also limits how many transactions the network can handle.
 
 \section{High Energy Consumption}
 \label{sec:energy}
 
-\Gls{pow} consensus, as used by Bitcoin, requires miners to perform vast amounts of computation. The Bitcoin network's total energy consumption is estimated at 120--180 TWh per year---comparable to the annual electricity usage of countries like Argentina or Norway.
+\Gls{pow} consensus, as used by Bitcoin, requires miners to perform a huge amount of computation. The Bitcoin network's total energy use is estimated at 120--180 TWh per year, which is comparable to the annual electricity usage of countries like Argentina or Norway.
 
-This has drawn significant criticism from environmentalists and policymakers. The transition of Ethereum from PoW to \gls{pos} in September 2022 (``The Merge'') demonstrated that energy-efficient alternatives exist, reducing Ethereum's energy consumption by approximately 99.95\%.
+This has led to criticism from environmentalists and policymakers. Ethereum's move from PoW to \gls{pos} in September 2022, called ``The Merge'', showed that more energy-efficient options are possible. It reduced Ethereum's energy use by about 99.95\%.
 
 \section{Latency and Speed}
 \label{sec:latency}
 
-Blockchain transactions are not instant. Before a transaction is considered ``confirmed,'' it must be:
+Blockchain transactions are not instant. Before a transaction is considered ``confirmed'', it must be:
 \begin{enumerate}
     \item Broadcast to the network.
     \item Included in a block by a miner/validator.
     \item Followed by several additional blocks (to reduce the risk of reorganisation).
 \end{enumerate}
 
-In Bitcoin, a single block takes approximately 10 minutes to mine, and 6 confirmations (approximately 1 hour) are typically recommended for high-value transactions. Even Ethereum, with its faster 12-second block time, requires multiple confirmations for finality.
+In Bitcoin, a single block takes about 10 minutes to mine, and 6 confirmations, about 1 hour, are usually recommended for high-value transactions. Even Ethereum, with its faster 12-second block time, still needs multiple confirmations for finality.
 
-This latency makes blockchain unsuitable for applications requiring real-time transaction processing, such as point-of-sale payments.
+This delay makes blockchain difficult to use for applications that need real-time payments, such as payments at a shop counter.
 
 \section{High Transaction Fees}
 \label{sec:fees}
 
-Transaction fees in blockchain networks are market-driven: when demand for block space exceeds supply, users must bid higher fees to have their transactions included promptly. During network congestion, this creates a ``fee market'' where:
+Transaction fees in blockchain networks depend on demand. When many users want their transactions included in a block, they must pay higher fees to get faster confirmation. During network congestion, this creates a ``fee market'' where:
 \begin{itemize}
     \item Wealthy users can afford fast confirmation.
-    \item Ordinary users face long delays or prohibitive costs.
-    \item Small-value transactions become economically unviable.
+    \item Ordinary users may face long delays or high costs.
+    \item Small-value transactions may no longer make sense.
 \end{itemize}
 
-This is particularly problematic for the vision of blockchain as a tool for \emph{financial inclusion}---providing banking services to the unbanked.
+This is a problem for the idea of using blockchain for \emph{financial inclusion}, especially for providing banking services to people who do not have access to banks.
+
+\section{Storage Bloat and Data Availability}
+\label{sec:storage-bloat}
+
+Another major issue in blockchain systems is \textbf{storage bloat}, which means the blockchain keeps growing over time. Since blockchains are append-only ledgers, every new block adds more data to the network. In many public blockchains, full nodes are expected to store the full transaction history. In smart-contract platforms, they may also need to store the current application state.
+
+This design makes the blockchain easier to audit and harder to tamper with, but it also creates a storage problem. As the ledger grows, new nodes take longer to synchronise, existing nodes need more disk space, and users with weaker hardware may stop running full nodes. This can weaken decentralisation because validation may slowly become limited to organisations that can afford the storage, bandwidth, and maintenance costs~\cite{si2023storage}.
+
+This storage problem is different from normal database growth because old blockchain data cannot simply be deleted without affecting verification. A node must either keep enough data to verify the chain on its own or depend on other nodes for missing information. This creates a trade-off between:
+\begin{itemize}
+    \item \textbf{Data redundancy:} Many nodes store the same data, which improves availability.
+    \item \textbf{Storage scalability:} Nodes store less data, which reduces cost but increases dependence on other nodes.
+    \item \textbf{Decentralisation:} Lower hardware requirements allow more people to run validating nodes.
+\end{itemize}
+
+Several methods have been suggested to reduce blockchain storage pressure. These include pruning old data, splitting data across nodes, storing large files off-chain, compression, erasure coding, and decentralised storage systems such as IPFS~\cite{alzoubi2024bloat,wang2024storage}. However, each method has some drawbacks. For example, off-chain storage reduces the size of on-chain data, but the network still needs a way to make sure the external data remains available. Similarly, pruning reduces local storage needs but can make historical verification harder for new nodes.
+
+Therefore, storage bloat is not only a hardware problem. It is also a decentralisation and data-availability problem. If storage requirements grow too quickly, the network may still work, but it may become less open to ordinary users.
 
 \section{The Blockchain Trilemma}
 \label{sec:trilemma}
 
-The challenges above are not independent; they are manifestations of a fundamental trade-off first articulated by Ethereum co-founder Vitalik Buterin. The \textbf{Blockchain Trilemma} states that a blockchain system can optimise at most two of the following three properties simultaneously~\cite{dai2019trilemma}:
+The challenges discussed above are connected to each other. They show a basic trade-off first explained by Ethereum co-founder Vitalik Buterin. The \textbf{Blockchain Trilemma} says that a blockchain system can strongly improve at most two of the following three properties at the same time~\cite{dai2019trilemma}:
 
 \begin{enumerate}
-    \item \textbf{Decentralisation:} The network is controlled by many independent nodes, with no single point of authority.
-    \item \textbf{Security:} The network is resistant to attacks and manipulation.
-    \item \textbf{Scalability:} The network can process a large volume of transactions quickly and cheaply.
+    \item \textbf{Decentralisation:} The network is controlled by many independent nodes, not by one central authority.
+    \item \textbf{Security:} The network can resist attacks and manipulation.
+    \item \textbf{Scalability:} The network can process many transactions quickly and cheaply.
 \end{enumerate}
 
 \begin{figure}[htbp]
@@ -85,11 +103,11 @@ The challenges above are not independent; they are manifestations of a fundament
 \node[below right=0.3cm of Sc, font=\scriptsize, text width=3.5cm, align=center] {High throughput\\Fast processing};
 
 \end{tikzpicture}
-\caption{The Blockchain Trilemma. Any blockchain system can optimise at most two of the three properties---decentralisation, security, and scalability---simultaneously. Improving one typically comes at the expense of another.}
+\caption{The Blockchain Trilemma. A blockchain system can usually improve only two of the three properties at the same time: decentralisation, security, and scalability. Improving one often affects another.}
 \label{fig:trilemma}
 \end{figure}
 
-\Cref{tab:trilemma-examples} illustrates how existing systems navigate this trade-off.
+\Cref{tab:trilemma-examples} shows how existing systems handle this trade-off.
 
 \begin{table}[htbp]
 \centering
@@ -104,8 +122,6 @@ Hyperledger   & $\times$   & \checkmark & \checkmark & Permissioned (not open) \
 Ethereum 2.0  & \checkmark & \checkmark & Improving  & Still working on full scaling \\
 \bottomrule
 \end{tabularx}
-\caption{How different blockchain systems navigate the Blockchain Trilemma.}
+\caption{How different blockchain systems handle the Blockchain Trilemma.}
 \label{tab:trilemma-examples}
 \end{table}
-
-The trilemma is not a proven impossibility theorem---it is an empirical observation about the difficulty of simultaneously achieving all three goals. Much of current blockchain research (sharding, rollups, new consensus mechanisms) aims to push the boundaries of this trade-off, and a ``solution'' to the trilemma remains one of the holy grails of blockchain engineering.

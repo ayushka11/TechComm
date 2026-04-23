@@ -53,7 +53,8 @@
 \contentsline {section}{\numberline {5.2}High Energy Consumption}{33}{section.5.2}%
 \contentsline {section}{\numberline {5.3}Latency and Speed}{33}{section.5.3}%
 \contentsline {section}{\numberline {5.4}High Transaction Fees}{33}{section.5.4}%
-\contentsline {section}{\numberline {5.5}The Blockchain Trilemma}{34}{section.5.5}%
+\contentsline {section}{\numberline {5.5}Storage Bloat and Data Availability}{34}{section.5.5}%
+\contentsline {section}{\numberline {5.6}The Blockchain Trilemma}{34}{section.5.6}%
 \contentsline {chapter}{\numberline {6}Conclusion and Future Work}{36}{chapter.6}%
 \contentsline {section}{\numberline {6.1}Conclusion}{36}{section.6.1}%
 \contentsline {section}{\numberline {6.2}Future Directions}{37}{section.6.2}%
