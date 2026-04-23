@@ -1,0 +1,245 @@
+% ============================================================
+%  CHAPTER 3 : CONSENSUS MECHANISMS AND SCALABILITY
+% ============================================================
+\chapter{Consensus Mechanisms and Scalability Engineering}
+\label{ch:consensus}
+
+\noindent\textbf{Declaration of Contributions:} This chapter was primarily authored by \textbf{Anmol Goklani}, who researched and wrote the sections on the Byzantine Generals Problem, types of consensus mechanisms (PoW, PoS, PBFT), and scalability engineering approaches (sharding, Layer~2, rollups, block size). All team members reviewed the technical content and verified the comparative tables.
+
+\bigskip
+
+The previous chapter explained \emph{how} Bitcoin records and orders transactions. This chapter addresses two deeper questions: \emph{how do independent nodes agree on what the truth is?}\ (consensus) and \emph{how can blockchain handle more transactions?}\ (scalability).
+
+\section{The Consensus Problem}
+\label{sec:consensus-problem}
+
+In a decentralised blockchain network, there is no central server that decides which transactions are valid and in what order they occurred. Instead, hundreds or thousands of independent nodes---each with its own copy of the ledger---must collectively agree on a single, consistent state. This is the \textbf{consensus problem}.
+
+The difficulty is compounded by the fact that some nodes may be faulty (crashed or unresponsive) or even \emph{malicious} (deliberately sending incorrect or contradictory information). The theoretical underpinning of this challenge is the \textbf{Byzantine Generals Problem}, formulated by Lamport, Shostak, and Pease in 1982~\cite{lamport1982byzantine}.
+
+\begin{definition}[Consensus Mechanism]
+\label{def:consensus}
+A consensus mechanism is a protocol that enables a decentralised network of nodes to agree on a single, consistent state of the blockchain, ensuring that all honest participants validate the same transactions and maintain a common transaction history---without relying on any central authority.
+\end{definition}
+
+Formally, a consensus mechanism defines a state transition function:
+\begin{equation}
+    C(S_t, \text{Tx}) \to S_{t+1}
+    \label{eq:state-transition}
+\end{equation}
+where $S_t$ is the current state, $\text{Tx}$ is a set of new transactions, and $S_{t+1}$ is the next agreed-upon state.
+
+Any practical consensus mechanism must satisfy three key properties:
+\begin{enumerate}
+    \item \textbf{Consistency} (Agreement): All honest nodes see the same state.
+    \item \textbf{Validity} (Integrity): Only correctly formed and properly signed transactions are accepted.
+    \item \textbf{Fault Tolerance} (Liveness): The system continues to operate even in the presence of faulty or malicious nodes (Byzantine resilience).
+\end{enumerate}
+
+\section{Types of Consensus Mechanisms}
+\label{sec:consensus-types}
+
+Different blockchain systems use different consensus mechanisms, each making different trade-offs among security, efficiency, and decentralisation. We examine the three most important ones.
+
+\subsection{Proof of Work (PoW)}
+\label{sec:pow-consensus}
+
+\Gls{pow} was described in detail in \Cref{sec:pow-detail} as the mechanism used by Bitcoin. To summarise:
+\begin{itemize}
+    \item Nodes (miners) compete to solve a cryptographic puzzle: find a nonce such that $H(\text{block} \| \text{nonce}) < \text{target}$.
+    \item The first miner to find a valid solution broadcasts the block to the network.
+    \item Other nodes verify the solution (a single hash computation) and accept the block if valid.
+    \item The miner is rewarded with newly created cryptocurrency and transaction fees.
+\end{itemize}
+
+\textbf{Strengths:} PoW is battle-tested (Bitcoin has been running since 2009 without a successful 51\% attack) and provides strong security guarantees.
+
+\textbf{Weaknesses:} It is extremely \emph{energy-intensive}. The Bitcoin network alone consumes more electricity than many countries. It also has low throughput---Bitcoin processes approximately 7 \gls{tps}, compared to Visa's approximately 50,000 \gls{tps}.
+
+\subsection{Proof of Stake (PoS)}
+\label{sec:pos}
+
+\Gls{pos}~\cite{king2012ppcoin} replaces computational puzzles with economic incentives. Instead of miners competing with hardware, \emph{validators} are selected to propose and validate blocks based on the amount of cryptocurrency they have ``staked'' (locked up as collateral).
+
+The probability of being selected as a validator is proportional to one's stake:
+\begin{equation}
+    P(\text{validator } i) \propto \text{stake}_i
+    \label{eq:pos}
+\end{equation}
+
+If a validator acts dishonestly (e.g., tries to approve fraudulent transactions), their staked funds can be ``slashed'' (confiscated)---providing a direct financial deterrent against misbehaviour.
+
+\textbf{Strengths:} PoS is vastly more energy-efficient than PoW (Ethereum reduced its energy consumption by approximately 99.95\% after switching from PoW to PoS in September 2022). It also enables higher throughput.
+
+\textbf{Weaknesses:} PoS can lead to \emph{wealth centralisation}---the rich get richer, since those with more stake are more likely to be selected as validators and earn rewards.
+
+\subsection{Practical Byzantine Fault Tolerance (PBFT)}
+\label{sec:pbft}
+
+\Gls{pbft}~\cite{castro1999pbft} is a consensus protocol designed for permissioned blockchain networks (where the set of nodes is known in advance). It works through multiple rounds of voting among nodes.
+
+PBFT can tolerate up to $f$ faulty (including malicious) nodes out of $n$ total nodes, provided:
+\begin{equation}
+    n \geq 3f + 1
+    \label{eq:pbft-threshold}
+\end{equation}
+Agreement is reached when at least $2f + 1$ nodes vote for the same state.
+
+\textbf{Strengths:} PBFT provides \emph{deterministic finality}---once a block is confirmed, it is final (no possibility of reorganisation). It is also fast for small networks.
+
+\textbf{Weaknesses:} PBFT does not scale well. The communication overhead grows as $O(n^2)$ with the number of nodes, making it impractical for large, open networks.
+
+\subsection{Comparison of Consensus Mechanisms}
+
+\Cref{tab:consensus-comparison} provides a side-by-side comparison of the three consensus mechanisms.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{l X X X}
+\toprule
+\textbf{Property} & \textbf{PoW} & \textbf{PoS} & \textbf{PBFT} \\
+\midrule
+Selection method    & Computational puzzle      & Stake-weighted random      & Voting rounds \\
+Energy usage        & Very high                 & Very low                   & Low \\
+Throughput          & Low ($\sim$7 TPS)         & Medium--High               & High (small networks) \\
+Finality            & Probabilistic             & Probabilistic/Deterministic & Deterministic \\
+Fault tolerance     & $> 50\%$ honest hashpower & $> 50\%$ honest stake      & $n \geq 3f+1$ \\
+Scalability         & Global, open              & Global, open               & Limited (permissioned) \\
+Example             & Bitcoin                   & Ethereum 2.0               & Hyperledger Fabric \\
+\bottomrule
+\end{tabularx}
+\caption{Comparison of Proof of Work, Proof of Stake, and PBFT consensus mechanisms.}
+\label{tab:consensus-comparison}
+\end{table}
+
+The choice of consensus mechanism reflects a fundamental trade-off:
+\begin{equation}
+    \text{Security} \longleftrightarrow \text{Scalability} \longleftrightarrow \text{Decentralisation}
+    \label{eq:trilemma-preview}
+\end{equation}
+No existing mechanism optimises all three simultaneously. This trade-off is explored in depth in \Cref{ch:challenges}.
+
+\section{Scalability Engineering}
+\label{sec:scalability}
+
+\subsection{The Scalability Problem}
+
+In most blockchain systems, \emph{every node} must verify and store \emph{every transaction}. While this redundancy is what makes blockchains secure and trustworthy, it severely limits throughput. \Cref{tab:throughput} illustrates the gap.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{l r}
+\toprule
+\textbf{System} & \textbf{Transactions Per Second (TPS)} \\
+\midrule
+Bitcoin          & $\sim$ 7 \\
+Ethereum (pre-merge) & $\sim$ 15--30 \\
+Visa             & $\sim$ 50{,}000 \\
+\bottomrule
+\end{tabular}
+\caption{Throughput comparison: blockchain networks vs.\ traditional payment systems~\cite{kohad2020scalability}.}
+\label{tab:throughput}
+\end{table}
+
+The goal of scalability engineering is to increase throughput without compromising security or decentralisation. Four main approaches have been proposed.
+
+\subsection{Sharding}
+\label{sec:sharding}
+
+Sharding divides the blockchain network into smaller groups called \textbf{shards}, each responsible for processing a subset of transactions in parallel~\cite{luu2016sharding}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    shard/.style={rectangle, draw, thick, rounded corners=5pt, minimum width=2.5cm, minimum height=2.5cm, font=\small},
+    node_s/.style={circle, draw, fill=blue!15, minimum size=0.35cm},
+    >=Stealth
+]
+
+\node[shard, fill=red!5] (s1) at (0, 0) {};
+\node[above=0.05cm of s1.north, font=\footnotesize\bfseries] {Shard 1};
+\foreach \i in {1,...,4} {
+    \node[node_s] at ($(s1.center) + ({90*\i}:0.7)$) {};
+}
+
+\node[shard, fill=green!5] (s2) at (4, 0) {};
+\node[above=0.05cm of s2.north, font=\footnotesize\bfseries] {Shard 2};
+\foreach \i in {1,...,4} {
+    \node[node_s] at ($(s2.center) + ({90*\i}:0.7)$) {};
+}
+
+\node[shard, fill=blue!5] (s3) at (8, 0) {};
+\node[above=0.05cm of s3.north, font=\footnotesize\bfseries] {Shard 3};
+\foreach \i in {1,...,4} {
+    \node[node_s] at ($(s3.center) + ({90*\i}:0.7)$) {};
+}
+
+\draw[<->, thick, dashed, gray] (s1) -- (s2) node[midway, above, font=\scriptsize]{cross-shard};
+\draw[<->, thick, dashed, gray] (s2) -- (s3) node[midway, above, font=\scriptsize]{cross-shard};
+
+\end{tikzpicture}
+\caption{Sharding: the network is partitioned into independent shards that process transactions in parallel. Cross-shard communication enables transactions that span multiple shards.}
+\label{fig:sharding}
+\end{figure}
+
+\textbf{Advantages:} Throughput scales roughly linearly with the number of shards.
+
+\textbf{Challenges:} Each shard has fewer nodes, which can reduce security. Cross-shard transactions require additional coordination protocols, adding complexity.
+
+\subsection{Layer-2 Solutions}
+\label{sec:layer2}
+
+Layer-2 solutions move transaction processing \emph{off the main chain} (Layer~1), settling only the final result on-chain~\cite{poon2016lightning}. The main blockchain serves as a ``court of last resort'' that can resolve disputes.
+
+Examples include:
+\begin{itemize}
+    \item \textbf{Payment Channels} (e.g., Bitcoin's Lightning Network): Two parties open a channel, conduct many transactions between themselves off-chain, and only broadcast the net result to the blockchain.
+    \item \textbf{State Channels}: A generalisation of payment channels to arbitrary state transitions.
+    \item \textbf{Sidechains}: Independent blockchains connected to the main chain via a two-way bridge.
+\end{itemize}
+
+\textbf{Advantages:} Near-instant transactions with very low fees.
+
+\textbf{Challenges:} Added architectural complexity; users must stay online (or use watchtowers) to prevent fraud.
+
+\subsection{Rollups}
+\label{sec:rollups}
+
+Rollups batch hundreds of transactions into a single transaction that is submitted to the main chain~\cite{buterin2021rollups}. There are two varieties:
+\begin{itemize}
+    \item \textbf{Optimistic Rollups:} Assume transactions are valid by default; any observer can submit a fraud proof within a challenge period if they detect an invalid transaction.
+    \item \textbf{Zero-Knowledge (ZK) Rollups:} Each batch includes a cryptographic proof (a \gls{zkp}) that the batch is valid. No challenge period is needed because validity is mathematically guaranteed.
+\end{itemize}
+
+\textbf{Advantages:} Significant throughput improvement while inheriting the security of the main chain.
+
+\textbf{Challenges:} Optimistic rollups have a delay for the challenge period; ZK rollups require complex proof generation.
+
+\subsection{Larger Block Size}
+
+The simplest approach to scaling is to increase the maximum size of each block, allowing more transactions per block.
+
+\textbf{Advantages:} Straightforward to implement; immediate throughput improvement.
+
+\textbf{Challenges:} Larger blocks take longer to propagate through the network, increasing the risk of forks. They also require more storage and bandwidth, potentially excluding nodes with limited resources and reducing decentralisation.
+
+\subsection{Summary of Scaling Approaches}
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{l X X}
+\toprule
+\textbf{Approach} & \textbf{Key Advantage} & \textbf{Main Challenge} \\
+\midrule
+Sharding            & Parallel processing, linear scaling     & Reduced per-shard security \\
+Layer-2 Solutions   & Off-chain speed and low fees             & Architectural complexity \\
+Rollups             & Batched efficiency, inherits L1 security & Proof generation overhead \\
+Larger Block Size   & Simple implementation                    & Centralisation risk \\
+\bottomrule
+\end{tabularx}
+\caption{Summary of blockchain scalability approaches and their trade-offs.}
+\label{tab:scaling-summary}
+\end{table}

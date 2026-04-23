@@ -1,0 +1,240 @@
+% ============================================================
+%  CHAPTER 2 : PRELIMINARIES AND BACKGROUND
+% ============================================================
+\chapter{Preliminaries and Background}
+\label{ch:background}
+
+\noindent\textbf{Declaration of Contributions:} This chapter was primarily authored by \textbf{Ayushka Garg}, who researched and wrote the sections on pre-2008 historical work (hash chains, Merkle trees, Bit Gold), the Bitcoin Whitepaper analysis, and the Bitcoin transaction model. \textbf{Jai Bhadu} contributed the introductory definitions and the section on blockchain's core properties. All team members reviewed the chapter for accuracy.
+
+\bigskip
+
+This chapter lays the groundwork needed to understand the rest of the report. We begin with the pre-2008 intellectual history that made blockchain possible, then provide a careful walkthrough of the Bitcoin whitepaper---the document that brought all these ideas together into a working system.
+
+\section{Pre-2008 Foundations}
+\label{sec:pre2008}
+
+Blockchain did not appear out of thin air in 2008. It was the culmination of decades of research in cryptography, distributed systems, and digital currency design. \Cref{fig:timeline} shows the key milestones.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    event/.style={rectangle, draw, rounded corners=3pt, fill=blue!8, text width=5.5cm, minimum height=1.2cm, font=\small, align=left},
+    yearbox/.style={circle, draw, fill=orange!20, font=\bfseries\small, minimum size=1cm},
+    >=Stealth
+]
+
+\draw[very thick, gray!50] (0,0) -- (0,-10.5);
+
+\node[yearbox] (y1) at (0, 0) {1991};
+\node[event, right=0.8cm of y1] (e1) {Hash chains proposed by Haber \& Stornetta for tamper-proof digital time-stamping~\cite{haber1991timestamp}.};
+
+\node[yearbox] (y2) at (0, -2.8) {1992};
+\node[event, left=0.8cm of y2, text width=5.5cm] (e2) {Merkle trees integrated to bundle multiple documents into a single block~\cite{haber1992merkle}.};
+
+\node[yearbox] (y3) at (0, -5.6) {1998};
+\node[event, right=0.8cm of y3] (e3) {Nick Szabo proposes \emph{Bit Gold}: a decentralised digital currency using proof-of-work and cryptographic chains~\cite{szabo1998bitgold}.};
+
+\node[yearbox] (y4) at (0, -8.4) {2008};
+\node[event, left=0.8cm of y4, text width=5.5cm] (e4) {Satoshi Nakamoto publishes the \emph{Bitcoin Whitepaper}, combining all prior ideas into a working peer-to-peer cash system~\cite{nakamoto2008bitcoin}.};
+
+\draw[->, thick, gray!60] (y1) -- (y2);
+\draw[->, thick, gray!60] (y2) -- (y3);
+\draw[->, thick, gray!60] (y3) -- (y4);
+
+\end{tikzpicture}
+\caption{Timeline of key milestones leading to the creation of Bitcoin in 2008.}
+\label{fig:timeline}
+\end{figure}
+
+\subsection{Hash Chains (Haber \& Stornetta, 1991)}
+
+In 1991, Stuart Haber and W.\,Scott Stornetta published a paper addressing a deceptively simple question: \emph{how can you prove that a digital document existed at a particular point in time and has not been altered since?}~\cite{haber1991timestamp}
+
+Their solution was the \textbf{hash chain}. Each document is run through a cryptographic hash function---a mathematical function that takes any input and produces a fixed-size output (the ``hash'' or ``digest''). Crucially, even a tiny change to the input produces a completely different hash. By linking each new document's hash to the hash of the previous document, they created a chain where altering any single entry would break all subsequent links.
+
+\begin{definition}[Cryptographic Hash Function]
+\label{def:hash}
+A cryptographic hash function $H: \{0,1\}^* \to \{0,1\}^n$ maps an arbitrary-length input to a fixed-length output and satisfies three properties:
+\begin{enumerate}
+    \item \textbf{Pre-image resistance:} Given $h$, it is computationally infeasible to find $m$ such that $H(m) = h$.
+    \item \textbf{Second pre-image resistance:} Given $m_1$, it is infeasible to find $m_2 \neq m_1$ such that $H(m_1) = H(m_2)$.
+    \item \textbf{Collision resistance:} It is infeasible to find \emph{any} pair $(m_1, m_2)$ with $m_1 \neq m_2$ and $H(m_1) = H(m_2)$.
+\end{enumerate}
+\end{definition}
+
+This idea---linking records cryptographically so that tampering with any one record is immediately detectable---is the intellectual seed from which blockchain grew.
+
+\subsection{Merkle Trees (1992)}
+
+In 1992, Haber and Stornetta improved their scheme by incorporating \textbf{Merkle trees}~\cite{haber1992merkle}, a data structure invented by Ralph Merkle~\cite{merkle1980protocols}. Instead of hashing documents one-by-one into a linear chain, multiple documents are organised into a binary tree. Each leaf node is the hash of a document, and each internal node is the hash of its two children. The single hash at the top of the tree---the \emph{Merkle root}---summarises all the documents below it.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    hashnode/.style={rectangle, draw, rounded corners=2pt, fill=teal!10, minimum width=1.8cm, minimum height=0.7cm, font=\footnotesize},
+    leafnode/.style={rectangle, draw, rounded corners=2pt, fill=yellow!15, minimum width=1.6cm, minimum height=0.7cm, font=\footnotesize},
+    level distance=1.5cm,
+    sibling distance=2.2cm,
+    edge from parent/.style={draw, ->, thick, gray!70}
+]
+
+\node[hashnode] (root) {\textbf{Merkle Root}}
+    child { node[hashnode] (h12) {$H_{12}$}
+        child { node[leafnode] (h1) {$H(\text{Tx}_1)$} }
+        child { node[leafnode] (h2) {$H(\text{Tx}_2)$} }
+    }
+    child { node[hashnode] (h34) {$H_{34}$}
+        child { node[leafnode] (h3) {$H(\text{Tx}_3)$} }
+        child { node[leafnode] (h4) {$H(\text{Tx}_4)$} }
+    };
+
+\node[below=0.1cm of h1, font=\scriptsize, gray] {Tx$_1$};
+\node[below=0.1cm of h2, font=\scriptsize, gray] {Tx$_2$};
+\node[below=0.1cm of h3, font=\scriptsize, gray] {Tx$_3$};
+\node[below=0.1cm of h4, font=\scriptsize, gray] {Tx$_4$};
+
+\end{tikzpicture}
+\caption{A Merkle tree with four transactions. Each leaf is the hash of a transaction; each internal node is the hash of its children. The Merkle root at the top provides a compact, tamper-evident summary of all transactions in the block.}
+\label{fig:merkle-tree}
+\end{figure}
+
+The Merkle tree provides two important benefits:
+\begin{itemize}
+    \item \textbf{Efficiency:} To verify that a specific transaction is included in a block, you only need a small number of hashes (logarithmic in the total number of transactions), not the entire block.
+    \item \textbf{Integrity:} Changing any single transaction changes its leaf hash, which propagates up the tree and changes the Merkle root, making tampering immediately detectable.
+\end{itemize}
+
+\subsection{Bit Gold (Nick Szabo, 1998)}
+
+In 1998, computer scientist Nick Szabo proposed \emph{Bit Gold}~\cite{szabo1998bitgold}, an ambitious design for a fully decentralised digital currency. Bit Gold combined several ideas:
+\begin{itemize}
+    \item A \textbf{proof-of-work} mechanism requiring computational effort to create new units of currency (analogous to the effort required to mine physical gold).
+    \item \textbf{Cryptographic chains} linking each unit of work to the next.
+    \item A \textbf{decentralised ownership registry} so that no single party controlled the money supply.
+\end{itemize}
+
+Bit Gold was never implemented, but it laid the conceptual foundation for Bitcoin. Many of its core ideas---computational puzzles, chained proofs, decentralised consensus---reappear in Nakamoto's design a decade later.
+
+
+\section{The Bitcoin Whitepaper}
+\label{sec:bitcoin-wp}
+
+In October 2008, a person (or group) using the pseudonym Satoshi Nakamoto published a nine-page paper titled \emph{``Bitcoin: A Peer-to-Peer Electronic Cash System''}~\cite{nakamoto2008bitcoin}. This paper proposed the first fully functional decentralised digital currency, elegantly solving problems that had stymied researchers for decades.
+
+\subsection{The Problem with Traditional Systems}
+
+Nakamoto's paper begins with a simple observation: all existing electronic payment systems depend on financial institutions serving as trusted third parties. This dependence introduces several costs:
+\begin{itemize}
+    \item \textbf{Transaction fees} to pay the intermediary.
+    \item \textbf{Delays} as transactions are cleared and settled.
+    \item \textbf{Reversibility} --- transactions can be reversed by the intermediary, which increases the need for trust and introduces fraud risk.
+    \item \textbf{Privacy concerns} --- the intermediary sees all transaction details.
+\end{itemize}
+
+\subsection{The Double-Spending Problem}
+\label{sec:double-spend}
+
+The central technical challenge for any digital currency is the \textbf{double-spending problem}. Unlike a physical coin, which can only be in one place at a time, a digital token is just a string of bits that can be copied perfectly. Without a mechanism to prevent it, a dishonest user could spend the same digital coin twice---once to buy a product and again to buy something else---before anyone realises the fraud.
+
+In centralised systems, a bank solves this trivially: it maintains a single authoritative record of everyone's balance. But in a decentralised system with no central authority, the challenge is: \emph{how do you get everyone to agree on which transaction happened first?}
+
+\subsection{Bitcoin Transactions}
+\label{sec:btc-transactions}
+
+In Bitcoin, a ``coin'' is not a file sitting on your computer. Instead, it is a \textbf{chain of digital signatures}. Each time a coin changes hands, the current owner digitally signs a record that includes the hash of the previous transaction and the public key of the new owner, then appends this to the coin's history. Anyone can verify the chain of ownership by checking the signatures using the corresponding public keys.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    tx/.style={rectangle, draw, rounded corners=3pt, fill=blue!8, minimum width=3cm, minimum height=2cm, font=\small, align=center},
+    >=Stealth
+]
+
+\node[tx] (tx0) at (0, 0) {\textbf{Transaction 0}\\[2pt] Owner 0's\\Public Key};
+\node[tx] (tx1) at (5, 0) {\textbf{Transaction 1}\\[2pt] Owner 1's\\Public Key\\[2pt]\footnotesize Hash of Tx\,0\\[1pt]\footnotesize + Signature};
+\node[tx] (tx2) at (10, 0) {\textbf{Transaction 2}\\[2pt] Owner 2's\\Public Key\\[2pt]\footnotesize Hash of Tx\,1\\[1pt]\footnotesize + Signature};
+
+\draw[->, very thick, blue!50] (tx0) -- (tx1) node[midway, above, font=\scriptsize] {Owner 0 signs};
+\draw[->, very thick, blue!50] (tx1) -- (tx2) node[midway, above, font=\scriptsize] {Owner 1 signs};
+
+\end{tikzpicture}
+\caption{Bitcoin transaction chain. Each transaction contains the hash of the previous transaction and the new owner's public key, signed by the previous owner. This creates a verifiable chain of ownership.}
+\label{fig:btc-tx-chain}
+\end{figure}
+
+Digital signatures prove ownership, but they do \emph{not} prevent double spending on their own. A dishonest owner could sign the same coin over to two different people. To resolve this, we need a way for the entire network to agree on which transaction came first.
+
+\subsection{The Timestamp Server}
+\label{sec:timestamp}
+
+Nakamoto's solution is to group transactions into \textbf{blocks} and pass each block through a timestamp server. The server creates a hash of the block and publishes it, linking it to the hash of the previous block. This creates a chronological chain of blocks---a \emph{blockchain}---that establishes an indisputable order of events.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, thick, rounded corners=3pt, fill=violet!8, minimum width=2.8cm, minimum height=1.8cm, font=\small, align=center},
+    >=Stealth
+]
+
+\node[block] (b0) at (0, 0) {\textbf{Block 0}\\[2pt]\scriptsize Hash: \texttt{0a3f...}\\[1pt]\scriptsize Prev: \texttt{0000}\\[1pt]\scriptsize Transactions};
+\node[block] (b1) at (4.5, 0) {\textbf{Block 1}\\[2pt]\scriptsize Hash: \texttt{7b2c...}\\[1pt]\scriptsize Prev: \texttt{0a3f}\\[1pt]\scriptsize Transactions};
+\node[block] (b2) at (9, 0) {\textbf{Block 2}\\[2pt]\scriptsize Hash: \texttt{e91d...}\\[1pt]\scriptsize Prev: \texttt{7b2c}\\[1pt]\scriptsize Transactions};
+\node[font=\Large] at (11.5, 0) {$\cdots$};
+
+\draw[->, very thick, violet!50] (b0) -- (b1);
+\draw[->, very thick, violet!50] (b1) -- (b2);
+
+\end{tikzpicture}
+\caption{The blockchain as a timestamp server. Each block contains a batch of transactions, a hash of its own contents, and the hash of the previous block. Altering any block would change its hash and break all subsequent links.}
+\label{fig:timestamp-chain}
+\end{figure}
+
+The critical insight is this: timestamping creates an \emph{immutable order} of transactions, which is exactly what is needed to prevent double spending. If two conflicting transactions appear, the network can now determine which one was recorded first.
+
+\subsection{Proof of Work}
+\label{sec:pow-detail}
+
+But who gets to add a new block to the chain? In a decentralised system, there is no designated authority. Nakamoto's answer is \gls{pow}: a mechanism that requires participants (called \emph{miners}) to expend significant computational effort to add a block, but makes it trivial for everyone else to verify the result.
+
+Specifically, a miner must find a number called a \textbf{nonce} such that when the block's contents are hashed together with the nonce, the resulting hash value is below a certain target:
+\begin{equation}
+    H(\text{block data} \,\|\, \text{nonce}) < \text{target}
+    \label{eq:pow}
+\end{equation}
+
+Because cryptographic hash functions behave essentially as random oracles, the only way to find a valid nonce is to try values one after another---a brute-force search. This requires substantial computational work (on average), but once a valid nonce is found, anyone can verify it with a single hash computation.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    miner/.style={rectangle, draw, rounded corners=3pt, fill=orange!10, minimum width=2.5cm, minimum height=1.2cm, font=\small, align=center},
+    block/.style={rectangle, draw, thick, rounded corners=3pt, fill=green!8, minimum width=3cm, minimum height=1.8cm, font=\small, align=center},
+    process/.style={rectangle, draw, rounded corners=3pt, fill=gray!10, minimum width=3cm, minimum height=1cm, font=\small, align=center},
+    >=Stealth
+]
+
+\node[miner] (m) at (0, 0) {\textbf{Miner}\\tries nonces};
+\node[process] (hash) at (4.5, 0) {$H(\text{block} \| \text{nonce})$};
+\node[block] (check) at (9, 0.8) {\textcolor{green!60!black}{\textbf{Valid!}}\\Hash $<$ Target\\Block added};
+\node[process] (retry) at (9, -0.8) {\textcolor{red!70}{\textbf{Invalid}}\\Try again};
+
+\draw[->, thick] (m) -- (hash);
+\draw[->, thick, green!60!black] (hash) -- node[above, font=\scriptsize, sloped]{yes} (check);
+\draw[->, thick, red!70] (hash) -- node[below, font=\scriptsize, sloped]{no} (retry);
+\draw[->, thick, dashed, gray] (retry.south) .. controls (4.5,-2) .. (m.south);
+
+\end{tikzpicture}
+\caption{The Proof of Work mining process. A miner repeatedly tries different nonces until the hash of the block falls below the target. Finding a valid nonce is hard; verifying it is easy.}
+\label{fig:pow-mining}
+\end{figure}
+
+Two important rules govern how the network uses Proof of Work:
+
+\paragraph{Longest Chain Rule.} When multiple valid chains exist (because two miners found blocks at roughly the same time), the network accepts the chain with the most cumulative work:
+\begin{equation}
+    \text{Chain}_{\text{valid}} = \arg\max_{\text{chain}} \sum_{\text{blocks}} \text{work}(\text{block})
+    \label{eq:longest-chain}
+\end{equation}
+This resolves conflicts and ensures a single, globally agreed-upon transaction history.
+
+\paragraph{Security Model.} Let $p$ denote the fraction of total hash power controlled by honest nodes and $q$ the fraction controlled by an attacker. The system is secure as long as $p > q$---that is, the honest majority controls more than 50\% of the network's computational power. The probability of an attacker successfully rewriting the blockchain decreases \emph{exponentially} with the number of confirmations (subsequent blocks), making deep reorganisations practically impossible.

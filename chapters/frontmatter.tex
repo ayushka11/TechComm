@@ -1,0 +1,106 @@
+% ============================================================
+%  FRONT MATTER: Cover, Contributions, Acknowledgements,
+%                Abstract, TOC, Lists
+% ============================================================
+
+% --- Cover Page ---
+\begin{titlepage}
+\begin{center}
+
+\vspace*{1cm}
+{\large \textbf{INDIAN INSTITUTE OF TECHNOLOGY ROORKEE}}\\[0.3cm]
+{\small Roorkee, Uttarakhand -- 247667, India}\\[1.5cm]
+
+\HRule \\[0.6cm]
+{\LARGE \textbf{Blockchain Technology:}}\\[0.3cm]
+{\LARGE \textbf{Foundations, Mechanisms, and Future Directions}}\\[0.4cm]
+\HRule \\[1.5cm]
+
+{\large \textit{A Technical Report}}\\[0.5cm]
+{\large \textit{Submitted in partial fulfilment of the requirements for}}\\[0.2cm]
+{\large \textit{Technical Communication (HSN--301)}}\\[2cm]
+
+{\large \textbf{Group 21}}\\[0.6cm]
+
+\begin{tabular}{l l}
+\textbf{Jai Bhadu}     & \\[0.15cm]
+\textbf{Ayushka Garg}  & \\[0.15cm]
+\textbf{Anmol Goklani} & \\[0.15cm]
+\textbf{Nitin Raj}     & \\[0.15cm]
+\textbf{Madhav Deorah} & \\
+\end{tabular}
+
+\vfill
+{\large April 2025}
+
+\end{center}
+\end{titlepage}
+
+% --- Statement of Contributions ---
+\clearpage
+\thispagestyle{plain}
+\chapter*{Statement of Contributions}
+\addcontentsline{toc}{chapter}{Statement of Contributions}
+
+This report is the combined effort of all five members of Group~21. The individual contributions of each author are detailed below.
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Author} & \textbf{Contribution} \\
+\midrule
+Jai Bhadu     & Authored \Cref{ch:intro} (Introduction) covering the motivation behind blockchain, the comparison between centralised and decentralised systems, and a high-level overview of the technology. Also contributed the PNB Scam case study illustrating failures of centralised trust. \\
+Ayushka Garg  & Authored \Cref{ch:background} (Preliminaries and Background) documenting the pre-2008 historical foundations of blockchain including hash chains, Merkle trees, and Bit Gold, as well as the detailed analysis of the Bitcoin Whitepaper covering transactions, timestamp servers, and Proof of Work. \\
+Anmol Goklani & Authored \Cref{ch:consensus} (Consensus Mechanisms and Scalability Engineering) covering the Byzantine Generals Problem, types of consensus protocols (PoW, PoS, PBFT), and scalability approaches including sharding, Layer-2 solutions, and rollups. \\
+Nitin Raj     & Authored \Cref{ch:applications} (Advanced Directions and Applications) covering smart contract evolution, zero-knowledge proofs, cross-chain interoperability, and real-world applications in finance, supply chain, healthcare, and digital identity. \\
+Madhav Deorah & Authored \Cref{ch:challenges} (Challenges and the Blockchain Trilemma) detailing scalability bottlenecks, energy consumption, latency, transaction fees, and the fundamental security--scalability--decentralisation trade-off. Also contributed the Conclusion (\Cref{ch:conclusion}). \\
+\bottomrule
+\end{tabularx}
+\caption{Individual contributions of each team member.}
+\label{tab:contributions}
+\end{table}
+
+All team members cross-checked each other's chapters, verified figures and tables for accuracy, and jointly compiled the bibliography.
+
+% --- Acknowledgements ---
+\clearpage
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+
+We would like to express our sincere gratitude to the faculty of the Technical Communication course (HSN--301) at IIT Roorkee for providing us with the opportunity to explore and present on blockchain technology. Their guidance in structuring technical arguments and presenting complex ideas to a broad audience was invaluable.
+
+We also thank our peers for their constructive feedback during the presentation that informed several improvements in this report. Finally, we acknowledge the authors of the foundational research papers---particularly Satoshi Nakamoto, Stuart Haber, W.\,Scott Stornetta, and Nick Szabo---whose pioneering work forms the intellectual backbone of this report.
+
+% --- Abstract ---
+\clearpage
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Blockchain technology represents a fundamental shift in how digital trust is established. Rather than relying on a central authority---such as a bank, government, or corporation---to verify transactions and maintain records, blockchain enables a network of independent participants to collectively agree on a single, tamper-proof version of the truth. This is achieved through a combination of cryptographic hashing, distributed consensus protocols, and economic incentives.
+
+This report provides a comprehensive introduction to blockchain technology, tracing its origins from early cryptographic time-stamping work in the 1990s through the landmark Bitcoin whitepaper of 2008 and into modern developments such as smart contracts, zero-knowledge proofs, and cross-chain interoperability. We examine the core mechanisms that make blockchains work---including digital signatures, Merkle trees, Proof of Work, and Proof of Stake---and analyse the fundamental engineering trade-offs captured by the so-called \emph{Blockchain Trilemma} among security, scalability, and decentralisation.
+
+We survey real-world applications across finance, supply chain management, healthcare, and digital identity, and discuss the open challenges that must be addressed before blockchain can achieve mainstream adoption. The report concludes with an outlook on future directions, including energy-efficient consensus mechanisms, integration with artificial intelligence and the Internet of Things, and the vision of a fully interoperable multi-chain ecosystem.
+
+\textbf{Keywords:} Blockchain, Bitcoin, Distributed Ledger, Consensus Mechanisms, Proof of Work, Smart Contracts, Scalability, Decentralisation.
+
+% --- Table of Contents ---
+\clearpage
+\tableofcontents
+
+% --- List of Figures ---
+\clearpage
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+
+% --- List of Tables ---
+\clearpage
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+
+% --- List of Abbreviations ---
+\clearpage
+\printglossary[type=\acronymtype, title={List of Abbreviations}]
+\addcontentsline{toc}{chapter}{List of Abbreviations}

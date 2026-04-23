@@ -1,0 +1,44 @@
+% ============================================================
+%  APPENDIX B : Blockchain Structure Diagram
+% ============================================================
+\chapter{Blockchain Structure Diagram}
+\label{app:block-diagram}
+
+\noindent\textbf{Declaration of Contributions:} This appendix was prepared by \textbf{Jai Bhadu} and \textbf{Ayushka Garg}.
+
+\bigskip
+
+\Cref{fig:block-structure} provides a detailed view of what a single block in a blockchain contains.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    field/.style={rectangle, draw, minimum width=7cm, minimum height=0.7cm, font=\small, anchor=north},
+    header/.style={rectangle, draw, thick, fill=blue!10, minimum width=7cm, minimum height=0.7cm, font=\small\bfseries, anchor=north},
+    >=Stealth
+]
+
+\node[header] (bh) at (0, 0) {Block Header};
+\node[field, fill=gray!5] (ver) at (0, -0.7) {Version Number};
+\node[field, fill=gray!5] (prev) at (0, -1.4) {Previous Block Hash};
+\node[field, fill=gray!5] (merkle) at (0, -2.1) {Merkle Root};
+\node[field, fill=gray!5] (ts) at (0, -2.8) {Timestamp};
+\node[field, fill=gray!5] (diff) at (0, -3.5) {Difficulty Target};
+\node[field, fill=gray!5] (nonce) at (0, -4.2) {Nonce};
+
+\node[header] (bd) at (0, -5.2) {Block Body};
+\node[field, fill=yellow!8] (tx1) at (0, -5.9) {Transaction 1};
+\node[field, fill=yellow!8] (tx2) at (0, -6.6) {Transaction 2};
+\node[field, fill=yellow!8] (tx3) at (0, -7.3) {$\vdots$};
+\node[field, fill=yellow!8] (txn) at (0, -8.0) {Transaction $n$};
+
+\draw[decorate, decoration={brace, amplitude=8pt, mirror}, thick]
+    (3.7, 0) -- (3.7, -4.9) node[midway, right=10pt, font=\small, align=left] {Hashed to produce\\the block's identity};
+
+\draw[decorate, decoration={brace, amplitude=8pt, mirror}, thick]
+    (3.7, -5.2) -- (3.7, -8.7) node[midway, right=10pt, font=\small, align=left] {Summarised by\\the Merkle Root};
+
+\end{tikzpicture}
+\caption{Anatomy of a blockchain block. The block header contains metadata (including the hash link to the previous block and the Merkle root of all transactions). The block body contains the actual transactions.}
+\label{fig:block-structure}
+\end{figure}
