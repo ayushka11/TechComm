@@ -22,6 +22,7 @@
 % --- Graphics & TikZ ---
 \usepackage{graphicx}
 \usepackage{tikz}
+\usepackage{eso-pic}
 \usetikzlibrary{
   shapes.geometric, arrows.meta, positioning, calc,
   decorations.pathreplacing, fit, backgrounds, chains,
@@ -83,6 +84,18 @@
 \fancyhead[R]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
+% --- Background Watermark (all pages) ---
+\newcommand{\IITRWatermark}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[opacity=0.1] at (current page.center) {%
+      \IfFileExists{iitr-logo.pdf}{%
+        \includegraphics[width=0.60\paperwidth]{iitr-logo.pdf}%
+      }{}%
+    };
+  \end{tikzpicture}%
+}
+\AddToShipoutPictureBG{\IITRWatermark}
+
 % --- Abbreviations ---
 \usepackage[acronym, toc, nonumberlist]{glossaries}
 \makeglossaries
@@ -114,6 +127,8 @@
 % --- Custom Commands ---
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \newcommand{\rupmark}{\text{INR\,}}
+
+
 
 % ============================================================
 \begin{document}
