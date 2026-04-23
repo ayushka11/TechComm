@@ -1,0 +1,143 @@
+% ============================================================
+%  Blockchain Technology Report
+%  IIT Roorkee Thesis Template (Single Column)
+%  Group 21
+% ============================================================
+\documentclass[12pt, a4paper, oneside]{report}
+
+% --- Geometry & Spacing ---
+\usepackage[top=1in, bottom=1in, left=1.25in, right=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% --- Fonts & Encoding ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% --- Mathematics ---
+\usepackage{amsmath, amssymb, amsthm}
+
+% --- Graphics & TikZ ---
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{
+  shapes.geometric, arrows.meta, positioning, calc,
+  decorations.pathreplacing, fit, backgrounds, chains,
+  shadows, patterns, matrix
+}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{longtable}
+
+% --- Listings (code) ---
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+
+\lstdefinestyle{pythonstyle}{
+  backgroundcolor=\color{backcolour},
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{blue}\bfseries,
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  numbersep=8pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2,
+  frame=single
+}
+\lstset{style=pythonstyle}
+
+% --- Hyperlinks & Cross-referencing ---
+\usepackage[hidelinks, bookmarks=true, bookmarksnumbered=true]{hyperref}
+\usepackage{cleveref}
+
+% --- Captions ---
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup{font=small, labelfont=bf}
+
+% --- Header/Footer ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\slshape \leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Abbreviations ---
+\usepackage[acronym, toc, nonumberlist]{glossaries}
+\makeglossaries
+
+\newacronym{pow}{PoW}{Proof of Work}
+\newacronym{pos}{PoS}{Proof of Stake}
+\newacronym{pbft}{PBFT}{Practical Byzantine Fault Tolerance}
+\newacronym{tps}{TPS}{Transactions Per Second}
+\newacronym{p2p}{P2P}{Peer-to-Peer}
+\newacronym{dlt}{DLT}{Distributed Ledger Technology}
+\newacronym{zkp}{ZKP}{Zero-Knowledge Proof}
+\newacronym{dapp}{DApp}{Decentralized Application}
+\newacronym{cbs}{CBS}{Core Banking System}
+\newacronym{lou}{LoU}{Letter of Undertaking}
+\newacronym{ssi}{SSI}{Self-Sovereign Identity}
+\newacronym{iot}{IoT}{Internet of Things}
+\newacronym{ai}{AI}{Artificial Intelligence}
+\newacronym{nft}{NFT}{Non-Fungible Token}
+\newacronym{defi}{DeFi}{Decentralized Finance}
+
+% --- Bibliography ---
+\usepackage[numbers, sort&compress]{natbib}
+
+% --- Theorem Environments ---
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+
+% --- Custom Commands ---
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\rupmark}{\text{INR\,}}
+
+% ============================================================
+\begin{document}
+
+% --- Front Matter ---
+\include{chapters/frontmatter}
+
+% --- Main Chapters ---
+\include{chapters/chapter1}
+\include{chapters/chapter2}
+\include{chapters/chapter3}
+\include{chapters/chapter4}
+\include{chapters/chapter5}
+\include{chapters/chapter6}
+
+% --- Bibliography ---
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+% --- Appendices ---
+\appendix
+\include{chapters/appendixA}
+\include{chapters/appendixB}
+\include{chapters/appendixC}
+
+\end{document}

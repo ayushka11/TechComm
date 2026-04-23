@@ -1,0 +1,114 @@
+% ============================================================
+%  APPENDIX A : Supplementary Code
+% ============================================================
+\chapter{Supplementary Code: Simple Blockchain in Python}
+\label{app:code}
+
+\noindent\textbf{Declaration of Contributions:} This appendix was prepared by \textbf{Nitin Raj} and \textbf{Anmol Goklani}, who jointly wrote and tested the Python implementation.
+
+\bigskip
+
+To make the concepts discussed in this report concrete, we present a minimal implementation of a blockchain in Python. This implementation demonstrates the core ideas---hashing, block linking, and proof of work---in approximately 80 lines of code.
+
+\begin{lstlisting}[language=Python, caption={A minimal blockchain implementation in Python.}, label={lst:blockchain}]
+import hashlib
+import json
+import time
+
+class Block:
+    """Represents a single block in the blockchain."""
+
+    def __init__(self, index, transactions, previous_hash, nonce=0):
+        self.index = index
+        self.timestamp = time.time()
+        self.transactions = transactions
+        self.previous_hash = previous_hash
+        self.nonce = nonce
+        self.hash = self.compute_hash()
+
+    def compute_hash(self):
+        block_string = json.dumps({
+            "index": self.index,
+            "timestamp": self.timestamp,
+            "transactions": self.transactions,
+            "previous_hash": self.previous_hash,
+            "nonce": self.nonce
+        }, sort_keys=True)
+        return hashlib.sha256(block_string.encode()).hexdigest()
+
+
+class Blockchain:
+    """A simple blockchain with Proof of Work."""
+
+    DIFFICULTY = 4  # number of leading zeros required
+
+    def __init__(self):
+        self.chain = []
+        self.pending_transactions = []
+        self.create_genesis_block()
+
+    def create_genesis_block(self):
+        genesis = Block(0, [], "0")
+        self.chain.append(genesis)
+
+    @property
+    def last_block(self):
+        return self.chain[-1]
+
+    def proof_of_work(self, block):
+        """Find a nonce such that the hash starts with
+        DIFFICULTY number of leading zeros."""
+        target = "0" * self.DIFFICULTY
+        while not block.hash.startswith(target):
+            block.nonce += 1
+            block.hash = block.compute_hash()
+        return block.hash
+
+    def add_transaction(self, sender, receiver, amount):
+        self.pending_transactions.append({
+            "sender": sender,
+            "receiver": receiver,
+            "amount": amount
+        })
+
+    def mine_block(self):
+        if not self.pending_transactions:
+            print("No transactions to mine.")
+            return False
+        new_block = Block(
+            index=self.last_block.index + 1,
+            transactions=self.pending_transactions,
+            previous_hash=self.last_block.hash
+        )
+        self.proof_of_work(new_block)
+        self.chain.append(new_block)
+        self.pending_transactions = []
+        return new_block
+
+    def is_chain_valid(self):
+        for i in range(1, len(self.chain)):
+            current = self.chain[i]
+            previous = self.chain[i - 1]
+            if current.previous_hash != previous.hash:
+                return False
+        return True
+
+
+# --- Example Usage ---
+if __name__ == "__main__":
+    bc = Blockchain()
+    bc.add_transaction("Alice", "Bob", 5.0)
+    bc.add_transaction("Bob", "Charlie", 2.5)
+    block = bc.mine_block()
+    print(f"Block {block.index} mined: {block.hash}")
+    print(f"Chain valid: {bc.is_chain_valid()}")
+\end{lstlisting}
+
+\paragraph{How to run.} Save the code as \texttt{blockchain.py} and execute:
+\begin{lstlisting}[language=bash, numbers=none, frame=none]
+$ python3 blockchain.py
+Block 1 mined: 0000a7c3...  (hash with 4 leading zeros)
+Chain valid: True
+\end{lstlisting}
+
+The \texttt{DIFFICULTY} parameter controls how many leading zeros the hash must have. Increasing it makes mining exponentially harder, illustrating the security--performance trade-off of Proof of Work.
