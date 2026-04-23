@@ -47,6 +47,7 @@
 \contentsline {subsection}{\numberline {4.4.2}Supply Chain Management}{29}{subsection.4.4.2}%
 \contentsline {subsection}{\numberline {4.4.3}Healthcare}{30}{subsection.4.4.3}%
 \contentsline {subsection}{\numberline {4.4.4}Digital Identity}{30}{subsection.4.4.4}%
+<<<<<<< HEAD
 \contentsline {subsection}{\numberline {4.4.5}Summary of Applications}{31}{subsection.4.4.5}%
 \contentsline {chapter}{\numberline {5}Challenges in Blockchain and the Blockchain Trilemma}{32}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Scalability Issues}{32}{section.5.1}%
@@ -67,3 +68,24 @@
 \contentsline {paragraph}{How to run.}{43}{section*.30}%
 \contentsline {chapter}{\numberline {B}Blockchain Structure Diagram}{45}{appendix.B}%
 \contentsline {chapter}{\numberline {C}Glossary of Blockchain Terms}{46}{appendix.C}%
+=======
+\contentsline {subsection}{\numberline {4.4.5}Summary of Applications}{30}{subsection.4.4.5}%
+\contentsline {chapter}{\numberline {5}Challenges in Blockchain and the Blockchain Trilemma}{31}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Scalability Issues}{31}{section.5.1}%
+\contentsline {section}{\numberline {5.2}High Energy Consumption}{32}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Latency and Speed}{32}{section.5.3}%
+\contentsline {section}{\numberline {5.4}High Transaction Fees}{32}{section.5.4}%
+\contentsline {section}{\numberline {5.5}The Blockchain Trilemma}{33}{section.5.5}%
+\contentsline {chapter}{\numberline {6}Conclusion and Future Work}{35}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Conclusion}{35}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Future Directions}{36}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Scalable Blockchain Systems}{36}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Energy-Efficient Consensus}{36}{subsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.2.3}Cross-Chain Ecosystems}{36}{subsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.2.4}Integration with AI and IoT}{36}{subsection.6.2.4}%
+\contentsline {subsection}{\numberline {6.2.5}Regulatory and Governance Frameworks}{37}{subsection.6.2.5}%
+\contentsline {chapter}{\numberline {A}Supplementary Code: Simple Blockchain in Python}{40}{appendix.A}%
+\contentsline {paragraph}{How to run.}{42}{section*.30}%
+\contentsline {chapter}{\numberline {B}Blockchain Structure Diagram}{44}{appendix.B}%
+\contentsline {chapter}{\numberline {C}Glossary of Blockchain Terms}{45}{appendix.C}%
+>>>>>>> 69d100f (checked chapter-4 and chapter-2)
