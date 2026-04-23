@@ -16,10 +16,14 @@
 *.log
 *.lot
 *.out
+*.pdf
 *.run.xml
 *.synctex.gz
 *.toc
 *.xdv
+
+/main.toc
+/main.pdf
 
 # Glossaries / acronyms
 *.acn
